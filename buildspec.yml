@@ -3,45 +3,54 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      php: 8.3
+      php: 8.3 # Use PHP 8.3 runtime
     commands:
-      - echo Installing Composer and dependencies...
+      - echo "📦 Installing Composer and Laravel dependencies..."
+
+      # Install Composer locally (without global install)
       - curl -sS https://getcomposer.org/installer | php
       - php composer.phar install --no-interaction --prefer-dist --optimize-autoloader
-      - echo "Composer dependencies installed."
+      - echo "✅ Composer dependencies installed."
 
-      - echo "Installing additional dependencies..."
+      # Install additional system packages if needed (e.g., SQLite for testing)
+      - echo "📥 Installing additional system dependencies..."
       - export DEBIAN_FRONTEND=noninteractive
       - apt-get update
       - apt-get install -y sqlite3
-      - echo "Additional dependencies installed."
+      - echo "✅ System dependencies installed."
 
   pre_build:
     commands:
       - echo "🔧 Preparing Laravel environment..."
 
-      # Check if .env.production exists, then copy it
+      # Copy production environment file if it exists
       - if [ -f .env.production ]; then cp .env.production .env; else cp .env.example .env; fi
+      - echo "📄 Environment file set."
 
-      # (Optional) Create SQLite file if using SQLite
+      # Optional: Create empty SQLite file if DB_CONNECTION is set to sqlite
       - if grep -q "DB_CONNECTION=sqlite" .env; then touch database/database.sqlite; fi
+      - echo "🗃️ SQLite database initialized if needed."
 
-      - echo "🧪 Running Laravel migrations..."
+      # Run database migrations
+      - echo "🧱 Running Laravel migrations..."
       - php artisan migrate --force
 
-      - echo "🔑 Generating application key..."
+      # Generate application encryption key
+      - echo "🔑 Generating Laravel app key..."
       - php artisan key:generate --force
 
-      - echo "🚀 Optimizing Laravel..."
+      # Laravel optimization (combines config, route, and view caching)
+      - echo "🚀 Running Laravel optimization commands..."
       - php artisan optimize
+      - echo "✅ Laravel optimized."
 
   build:
     commands:
-      - echo "🧪 Running Laravel Tests..."
+      - echo "🧪 Running Laravel unit tests..."
       - php artisan test --testsuite=Unit --stop-on-failure
 
-      - echo "✅ Build completed."
+      - echo "✅ Build and testing phase completed."
 
   post_build:
     commands:
-      - echo "🚀 Deployment ready! Triggering post-deployment hook..."
+      - echo "🚀 Post-build: Ready for deployment trigger or next pipeline stage."
