@@ -11,20 +11,27 @@ phases:
 
   pre_build:
     commands:
-      - echo Setting Laravel permissions...
-      - cp .env.example .env
-      - php artisan config:clear
-      - php artisan cache:clear
-      - php artisan config:cache
-      - php artisan route:cache
-      - php artisan view:cache
+      - echo "🔧 Preparing Laravel environment..."
+
+      # Check if .env.production exists, then copy it
+      - if [ -f .env.production ]; then cp .env.production .env; else cp .env.example .env; fi
+
+      # (Optional) Create SQLite file if using SQLite
+      - if grep -q "DB_CONNECTION=sqlite" .env; then touch database/database.sqlite; fi
+
+      - echo "🧪 Running Laravel migrations..."
+      - php artisan migrate --force
+
+      # Laravel Cache Optimization
+      - php artisan optimize
 
   build:
     commands:
-      - echo Running Laravel Tests...
+      - echo "🧪 Running Laravel Tests..."
       - php artisan test || true # You can fail the build if test fails
-      - echo Build completed.
+
+      - echo "✅ Build completed."
 
   post_build:
     commands:
-      - echo Deployment ready! Triggering post-deployment hook...
+      - echo "🚀 Deployment ready! Triggering post-deployment hook..."
