@@ -16,6 +16,6 @@ aws secretsmanager get-secret-value \
 
 # Secure permissions
 chmod 640 "$PROJECT_PATH"/.env
-chown ec2-user:www-data "$PROJECT_PATH"/.env
+chown ubuntu:www-data "$PROJECT_PATH"/.env
 
 echo "✅ .env successfully fetched and saved."
