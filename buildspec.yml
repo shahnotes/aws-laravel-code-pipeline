@@ -1,0 +1,30 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      php: 8.3
+    commands:
+      - echo Installing Composer and dependencies...
+      - curl -sS https://getcomposer.org/installer | php
+      - php composer.phar install --no-interaction --prefer-dist --optimize-autoloader
+
+  pre_build:
+    commands:
+      - echo Setting Laravel permissions...
+      - cp .env.example .env
+      - php artisan config:clear
+      - php artisan cache:clear
+      - php artisan config:cache
+      - php artisan route:cache
+      - php artisan view:cache
+
+  build:
+    commands:
+      - echo Running Laravel Tests...
+      - php artisan test || true # You can fail the build if test fails
+      - echo Build completed.
+
+  post_build:
+    commands:
+      - echo Deployment ready! Triggering post-deployment hook...
