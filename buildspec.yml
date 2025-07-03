@@ -8,6 +8,13 @@ phases:
       - echo Installing Composer and dependencies...
       - curl -sS https://getcomposer.org/installer | php
       - php composer.phar install --no-interaction --prefer-dist --optimize-autoloader
+      - echo "Composer dependencies installed."
+
+      - echo "Installing additional dependencies..."
+      - export DEBIAN_FRONTEND=noninteractive
+      - apt-get update
+      - apt-get install -y sqlite3
+      - echo "Additional dependencies installed."
 
   pre_build:
     commands:
