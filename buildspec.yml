@@ -29,10 +29,11 @@ phases:
       - echo "🧪 Running Laravel migrations..."
       - php artisan migrate --force
 
-      # Laravel Cache Optimization
-      - php artisan optimize
-
+      - echo "🔑 Generating application key..."
       - php artisan key:generate --force
+
+      - echo "🚀 Optimizing Laravel..."
+      - php artisan optimize
 
   build:
     commands:
