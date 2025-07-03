@@ -25,6 +25,8 @@ phases:
       # Laravel Cache Optimization
       - php artisan optimize
 
+      - php artisan key:generate --force
+
   build:
     commands:
       - echo "🧪 Running Laravel Tests..."
